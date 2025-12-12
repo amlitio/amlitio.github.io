@@ -99,7 +99,7 @@ body::before {
   padding: 12px 0;
 }
 .brand{
-  font-weight:800; font-size: 22px; color:var(--text); text-decoration:none;
+  font-weight:800; font-size: 24px; color:var(--text); text-decoration:none;
   letter-spacing: 1px;
 }
 .nav-links{
