@@ -217,8 +217,43 @@ setTimeout(typeTerminal, 3000);
 // Parallax effect
 window.addEventListener('scroll', () => {
   const scrolled = window.pageYOffset;
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const progress = (scrolled / maxScroll) * 100;
+  document.getElementById('scroll-progress').style.width = progress + '%';
+  
   const hero = document.querySelector('.hero');
+  const heroText = document.querySelector('.hero-text');
   if (hero) {
     hero.style.transform = `translateY(${scrolled * 0.5}px)`;
   }
+  if (heroText) {
+    hero.style.transform = `translateY(${scrolled * 0.2}px)`;
+  }
+  
+  // Fade in sections
+  const reveals = document.querySelectorAll('.reveal');
+  reveals.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.8) {
+      el.classList.add('visible');
+    }
+  });
+});
+
+// 3D Tilt effect
+document.querySelectorAll('.innovation-item').forEach(item => {
+  item.addEventListener('mousemove', (e) => {
+    const rect = item.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+    item.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+  });
+  
+  item.addEventListener('mouseleave', () => {
+    item.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+  });
 });

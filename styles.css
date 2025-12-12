@@ -38,6 +38,17 @@ body{
   overflow-x: hidden;
 }
 
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 4px;
+  background: var(--gradient);
+  z-index: 1001;
+  transition: width 0.3s ease;
+}
+
 #particle-canvas {
   position: fixed;
   top: 0;
@@ -210,6 +221,19 @@ body::before {
 }
 .muted{ color:var(--muted) }
 
+.about-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  align-items: center;
+}
+
+.about-image img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -319,11 +343,18 @@ body::before {
   transition: all 0.3s ease;
   z-index: 1000;
   text-decoration: none;
+  animation: pulse-fab 3s infinite;
+}
+
+@keyframes pulse-fab {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 .fab:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  animation: none;
 }
 
 .fab span {
