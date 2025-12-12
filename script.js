@@ -28,3 +28,16 @@ if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').match
   // Light by default
   document.documentElement.classList.add('light');
 }
+
+// Typing effect
+const typingEl = document.getElementById('typing');
+const text = 'Delivering Results.';
+let i = 0;
+function typeWriter() {
+  if (i < text.length) {
+    typingEl.innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeWriter, 100);
+  }
+}
+setTimeout(typeWriter, 2000); // Start after 2s
