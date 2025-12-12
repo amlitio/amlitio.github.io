@@ -50,6 +50,7 @@ canvas.height = window.innerHeight;
 
 let particles = [];
 const particleCount = 100;
+const connectionDistance = 100;
 
 class Particle {
   constructor() {
@@ -82,6 +83,23 @@ for (let i = 0; i < particleCount; i++) {
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < connectionDistance) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${(connectionDistance - distance) / connectionDistance * 0.2})`;
+        ctx.stroke();
+      }
+    }
+  }
+  
   particles.forEach(p => {
     p.update();
     p.draw();
@@ -94,6 +112,25 @@ window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
+
+// Mouse following glow
+let mouse = { x: 0, y: 0 };
+document.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function drawGlow() {
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, 50, 0, Math.PI * 2);
+  const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 50);
+  gradient.addColorStop(0, 'rgba(0, 255, 255, 0.3)');
+  gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  requestAnimationFrame(drawGlow);
+}
+drawGlow();
 
 // Animate progress bars on scroll
 const progressBars = document.querySelectorAll('.progress');
@@ -137,3 +174,51 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 counters.forEach(counter => counterObserver.observe(counter));
+
+// Terminal typing effect
+const terminalText = document.getElementById('terminal-text');
+const commands = [
+  'python optimize_project.py --ai',
+  'Analyzing project data...',
+  'AI optimization complete. Efficiency: +95%',
+  'blockchain secure_transaction.js',
+  'Transaction secured with smart contract.',
+  'iot monitor_sensors.py',
+  'Sensors online. Real-time monitoring active.'
+];
+let commandIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+
+function typeTerminal() {
+  const currentCommand = commands[commandIndex];
+  if (!isDeleting) {
+    terminalText.textContent = currentCommand.substring(0, charIndex + 1);
+    charIndex++;
+    if (charIndex === currentCommand.length) {
+      isDeleting = true;
+      setTimeout(typeTerminal, 2000);
+      return;
+    }
+  } else {
+    terminalText.textContent = currentCommand.substring(0, charIndex);
+    charIndex--;
+    if (charIndex < 0) {
+      isDeleting = false;
+      commandIndex = (commandIndex + 1) % commands.length;
+      setTimeout(typeTerminal, 500);
+      return;
+    }
+  }
+  setTimeout(typeTerminal, isDeleting ? 50 : 100);
+}
+setTimeout(typeTerminal, 3000);
+
+// Parallax effect
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+  }
+});
