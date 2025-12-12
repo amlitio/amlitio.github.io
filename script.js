@@ -112,3 +112,28 @@ progressBars.forEach(bar => {
   bar.style.animationPlayState = 'paused';
   progressObserver.observe(bar);
 });
+
+// Animated counters
+const counters = document.querySelectorAll('.stat-number');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const counter = entry.target;
+      const target = +counter.getAttribute('data-target');
+      const increment = target / 100;
+      let current = 0;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          counter.textContent = target + (target === 95 || target === 30 ? '%' : '+');
+          clearInterval(timer);
+        } else {
+          counter.textContent = Math.floor(current) + (target === 95 || target === 30 ? '%' : '+');
+        }
+      }, 30);
+      counterObserver.unobserve(counter);
+    }
+  });
+}, { threshold: 0.5 });
+
+counters.forEach(counter => counterObserver.observe(counter));
