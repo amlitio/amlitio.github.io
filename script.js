@@ -3,6 +3,20 @@ const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 navToggle?.addEventListener('click', () => navLinks.classList.toggle('open'));
 
+// Smooth scrolling
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
 // Reveal on scroll
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries)=>{
@@ -42,6 +56,13 @@ function typeWriter() {
 }
 setTimeout(typeWriter, 2000); // Start after 2s
 
+// Loading screen
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loading').classList.add('hide');
+  }, 2000);
+});
+
 // Particle system
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
@@ -60,9 +81,25 @@ class Particle {
     this.vy = (Math.random() - 0.5) * 0.5;
     this.size = Math.random() * 2 + 1;
     this.color = `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.5 + 0.5})`;
+    this.originalVx = this.vx;
+    this.originalVy = this.vy;
   }
 
   update() {
+    // Mouse interaction
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 100) {
+      const force = (100 - distance) / 100;
+      this.vx += (dx / distance) * force * 0.01;
+      this.vy += (dy / distance) * force * 0.01;
+    } else {
+      // Return to original velocity
+      this.vx += (this.originalVx - this.vx) * 0.01;
+      this.vy += (this.originalVy - this.vy) * 0.01;
+    }
+
     this.x += this.vx;
     this.y += this.vy;
     if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
